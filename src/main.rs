@@ -1,30 +1,23 @@
-use dotenv::dotenv;
-use reqwest::blocking::Client;
-use std::env;
+use std::error::Error;
+use colour::{dark_green, yellow, dark_red};
+use newsapi::{articles_api, Articles};
 
-pub fn articles_api() -> String {
-  dotenv().ok(); // Load the environment variables from the .env file
-
-  let url = "https://newsapi.org/v2/top-headlines?";
-  let input_sources: Vec<&str> = vec!["science", "technology"];
-  let api_key = std::env::var("NEWS_ORG_API_KEY").unwrap();
-  let client = Client::new();
-
-  for source in input_sources {
-      let request_url = format!("{}category={}&apiKey={}", url, source, api_key);
-      let response = client
-          .get(&request_url)
-          .header("User-Agent", "Rust POC")
-          .send()
-          .unwrap();
-
-      let response_text = response.text().unwrap();
-      println!("{}", response_text);
+fn render_articles(articles: &Articles) {
+  for article in &articles.articles {
+    dark_green!("> {}\n", article.title);
+    yellow!("> {}\n", article.url);
+    if let Some(author) = &article.author {
+      dark_red!("> {}\n\n", author);
+  } else {
+      dark_red!("> No author available\n\n");
+  }
   }
 
-  String::from("locochon")
 }
 
-fn main() {
-  let locochon = articles_api();
+fn main() -> Result<(), Box<dyn Error>> {
+  let results = articles_api(String::from("technology"))?;
+  render_articles(&results);
+
+  Ok(())
 }
