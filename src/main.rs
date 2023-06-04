@@ -1,23 +1,27 @@
-use std::error::Error;
-use colour::{dark_green, yellow, dark_red};
+mod theme;
+
 use newsapi::{articles_api, Articles};
+use std::error::Error;
 
 fn render_articles(articles: &Articles) {
+  let theme = theme::default();
+  theme.print_text("# Top headlines\n\n");
   for article in &articles.articles {
-    dark_green!("> {}\n", article.title);
-    yellow!("> {}\n", article.url);
-    if let Some(author) = &article.author {
-      dark_red!("> {}\n\n", author);
-  } else {
-      dark_red!("> No author available\n\n");
-  }
-  }
+      theme.print_text(&format!("`{}`", article.title));
+      theme.print_text(&format!("> *{}*", article.url));
 
+      if let Some(author) = &article.author {
+        theme.print_text(&format!("> Author: {:?}", author));
+      } else {
+        theme.print_text("> No author available");
+      }
+      theme.print_text("---");
+  }
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-  let results = articles_api(String::from("technology"))?;
-  render_articles(&results);
+    let results = articles_api(String::from("technology"))?;
+    render_articles(&results);
 
-  Ok(())
+    Ok(())
 }
