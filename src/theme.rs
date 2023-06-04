@@ -1,5 +1,5 @@
 
-use termimad::crossterm::style::Color::{Green, Rgb, Yellow};
+use termimad::crossterm::style::Color::{Rgb, Yellow};
 use termimad::{rgb, MadSkin, StyledChar};
 
 pub fn default() -> MadSkin {
