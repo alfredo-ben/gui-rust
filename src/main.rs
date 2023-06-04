@@ -1,6 +1,7 @@
 mod theme;
 
-use newsapi::{articles_api, Articles};
+use newsapi::articles_api;
+use newsapi::Articles;
 use std::error::Error;
 
 fn render_articles(articles: &Articles) {
